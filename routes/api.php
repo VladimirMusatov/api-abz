@@ -17,4 +17,5 @@ use App\Http\Controllers\Api\ApiController;
 
 Route::get('token', [ApiController::class , 'get_token']);
 Route::get('users/{id}', [ApiController::class, 'get_user_by_id']);
+Route::get('/users', [ApiController::class, 'get_users']);
 Route::get('positions', [ApiController::class, 'positions']);

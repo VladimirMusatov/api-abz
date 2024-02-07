@@ -57,4 +57,73 @@ class ApiController extends Controller
         ]);
 
     }
+
+    public function get_users(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'count' => [
+                'required',
+                'integer',
+            ],
+            'page' => [
+                'required',
+                'integer',
+            ],
+            'offset' => [
+                'integer'
+            ],
+        ]);
+
+        if($validator->fails()){
+
+            $errors = $validator->errors();
+
+            return response()->json([
+                "success" => false,
+                "message" => "Validation failed",
+                "fails" => $errors,
+            ]);
+        }
+
+        $count = $request->count;
+        $offset = $request->offset;
+
+        if($offset !== null){
+            $users = User::offset($offset)->limit($count)->whereNot('id', 1)->orderBy('created_at', 'desc')->get();
+
+            $response = response()->json([
+                "success" => true,
+                'count' => $count,
+                "users" => $users,
+            ]);
+
+        }else{
+            $users = User::orderBy('created_at', 'desc')->whereNot('id', 1)->paginate($count);
+
+            $nextUrl = $users->nextPageUrl();
+            if ($nextUrl) {
+                $nextUrl .= '&count=' . $count;
+            }
+            $prevUrl = $users->previousPageUrl();
+            if ($prevUrl) {
+                $prevUrl .= '&count=' . $count;
+            }
+
+            $response = response()->json([
+                "success" => true,
+                'page' => $users->currentPage(),
+                "total_pages" => $users->lastPage(),
+                'total_users' => $users->total(),
+                'count' => $users->count(),
+                'links' => [
+                    'next_url' => $nextUrl,
+                    'prev_url' => $prevUrl,
+                ],
+                "users" => $users->items(),
+            ]);
+        }
+
+        return $response;
+    }
 }
