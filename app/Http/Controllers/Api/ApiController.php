@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\ApiToken;
 use App\Models\User;
+use App\Models\Position;
 
 class ApiController extends Controller
 {
@@ -17,6 +18,16 @@ class ApiController extends Controller
         return response()->json([
             'success' => true,
             'token' => $token
+        ]);
+    }
+
+    public function positions()
+    {
+        $positions = Position::get(['id', 'title']);
+
+        return response()->json([
+            'success' => true,
+            'positions' => $positions,
         ]);
     }
 
