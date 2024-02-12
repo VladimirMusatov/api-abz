@@ -305,4 +305,11 @@ class ApiController extends Controller
             ];
         }
     }
+
+    public function test()
+    {
+        event(new TokenRefreshed());
+
+        return 'test';
+    }
 }

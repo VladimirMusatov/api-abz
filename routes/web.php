@@ -15,3 +15,5 @@ use App\Http\Controllers\MainController;
 */
 
 Route::get('/', [MainController::class, 'index'])->name('index');
+
+Route::get('/test', [App\Http\Controllers\Api\ApiController::class, 'test']);
